@@ -3,6 +3,7 @@ Stacked PR 예제 프로젝트
 """
 from auth import AuthService
 from profile import ProfileService
+from settings import SettingsService
 
 def main():
     print("Hello, Stacked PR!")
@@ -13,6 +14,10 @@ def main():
     profile = ProfileService(auth)
     profile.create_profile("user1", "user1@example.com", "User One")
     print("프로필 생성 완료")
+    
+    settings = SettingsService(auth, profile)
+    settings.update_setting("user1", "theme", "dark")
+    print("설정 업데이트 완료")
 
 if __name__ == "__main__":
     main()
