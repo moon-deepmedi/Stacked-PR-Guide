@@ -12,11 +12,37 @@ Git Flow 기반의 Stacked Pull Request 사용법을 배우기 위한 예제 레
 
 ## 🏗️ 현재 구조
 
+### 브랜치 관계도
+
+```mermaid
+gitGraph
+    commit id: "초기 커밋"
+    branch develop
+    checkout develop
+    commit id: "기본 구조 추가"
+    branch feature-a-1
+    checkout feature-a-1
+    commit id: "인증 기능 추가 (PR #1)"
+    branch feature-a-2
+    checkout feature-a-2
+    commit id: "프로필 기능 추가 (PR #2)"
+    branch feature-a-3
+    checkout feature-a-3
+    commit id: "설정 기능 추가 (PR #3)"
 ```
-develop
-  └── feature-a-1 (PR #1) ← 사용자 인증 기능
-        └── feature-a-2 (PR #2) ← 사용자 프로필 기능
-              └── feature-a-3 (PR #3) ← 사용자 설정 기능
+
+### 의존성 구조
+
+```mermaid
+graph TD
+    A[develop] --> B[feature-a-1<br/>PR #1<br/>인증 기능]
+    B --> C[feature-a-2<br/>PR #2<br/>프로필 기능]
+    C --> D[feature-a-3<br/>PR #3<br/>설정 기능]
+    
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style C fill:#fff4e1
+    style D fill:#fff4e1
 ```
 
 ## 🚀 시작하기

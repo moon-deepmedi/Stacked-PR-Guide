@@ -8,11 +8,37 @@ Stacked Pull Request는 여러 개의 연관된 변경사항을 독립적으로 
 
 이 레포지토리에서는 다음과 같은 구조를 사용합니다:
 
+### 브랜치 관계도
+
+```mermaid
+gitGraph
+    commit id: "초기 커밋"
+    branch develop
+    checkout develop
+    commit id: "기본 구조 추가"
+    branch feature-a-1
+    checkout feature-a-1
+    commit id: "인증 기능 추가 (PR #1)"
+    branch feature-a-2
+    checkout feature-a-2
+    commit id: "프로필 기능 추가 (PR #2)"
+    branch feature-a-3
+    checkout feature-a-3
+    commit id: "설정 기능 추가 (PR #3)"
 ```
-develop
-  └── feature-a-1 (PR #1)
-        └── feature-a-2 (PR #2)
-              └── feature-a-3 (PR #3)
+
+### 의존성 다이어그램
+
+```mermaid
+graph LR
+    A[develop] -->|기반| B[feature-a-1<br/>PR #1]
+    B -->|기반| C[feature-a-2<br/>PR #2]
+    C -->|기반| D[feature-a-3<br/>PR #3]
+    
+    style A fill:#e1f5ff,stroke:#0066cc,stroke-width:2px
+    style B fill:#fff4e1,stroke:#ff9900,stroke-width:2px
+    style C fill:#fff4e1,stroke:#ff9900,stroke-width:2px
+    style D fill:#fff4e1,stroke:#ff9900,stroke-width:2px
 ```
 
 각 브랜치는 이전 브랜치를 기반으로 생성되며, 순차적으로 병합됩니다.
@@ -73,6 +99,26 @@ git push -u origin feature-a-3
 #### 방법 1: Rebase를 사용한 순차적 갱신 (권장)
 
 이 방법은 각 브랜치를 순차적으로 rebase하여 깔끔한 히스토리를 유지합니다.
+
+```mermaid
+sequenceDiagram
+    participant F1 as feature-a-1
+    participant F2 as feature-a-2
+    participant F3 as feature-a-3
+    
+    Note over F1: 리뷰 반영 후<br/>새 커밋 추가
+    F1->>F1: 코드 수정 및 커밋
+    
+    Note over F2: feature-a-1 위로 rebase
+    F1->>F2: git rebase feature-a-1
+    F2->>F2: 충돌 해결 (필요시)
+    F2->>F2: force push
+    
+    Note over F3: feature-a-2 위로 rebase
+    F2->>F3: git rebase feature-a-2
+    F3->>F3: 충돌 해결 (필요시)
+    F3->>F3: force push
+```
 
 ```bash
 # 1. feature-a-1의 최신 변경사항을 가져옴
@@ -156,6 +202,27 @@ git push origin feature-a-3
 ## 병합 순서
 
 Stacked PR은 항상 **아래에서 위로** 순차적으로 병합해야 합니다:
+
+### 병합 순서 다이어그램
+
+```mermaid
+sequenceDiagram
+    participant Dev as develop
+    participant F1 as feature-a-1
+    participant F2 as feature-a-2
+    participant F3 as feature-a-3
+    
+    Note over F1: 1단계: 먼저 병합
+    F1->>Dev: 병합 (PR #1)
+    
+    Note over F2: 2단계: 그 다음 병합
+    F2->>Dev: 병합 (PR #2)
+    
+    Note over F3: 3단계: 마지막 병합
+    F3->>Dev: 병합 (PR #3)
+```
+
+### 병합 순서
 
 1. `feature-a-1` → `develop` (먼저 병합)
 2. `feature-a-2` → `develop` (그 다음 병합)
